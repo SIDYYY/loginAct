@@ -1,24 +1,45 @@
-import { useState } from 'react';
-import { StyleSheet, Text, View, ScrollView, SafeAreaView, TextInput, TouchableOpacity } from 'react-native';
+import React, { useState,useEffect, useRef } from 'react';
+import { StyleSheet, Text, View, ScrollView, SafeAreaView, TextInput, TouchableOpacity, Animated } from 'react-native';
 
 export default function App() {
   const [popUp, setPopUp] = useState('')
- 
+
+  const slideAnimTop = useRef(new Animated.Value(-300)).current;
+  const FadeAnim = useRef(new Animated.Value(0)).current;
+
   const buttonClicked = () => {
     setPopUp('Login Successfully');
   };
 
+  useEffect(() => {
+    Animated.timing(slideAnimTop, {
+      toValue: 0, 
+      duration: 1000,
+      useNativeDriver: true,
+    }).start();
+  }, []);
+
+  useEffect(() => {
+    Animated.timing(FadeAnim, {
+      toValue: 1, 
+      duration: 350,
+      useNativeDriver: true, 
+    }).start();
+  }, []);
+
+
   return (
     <SafeAreaView>
-    <ScrollView style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
+    <View style={styles.loginContainer}>
     <View style={styles.portcontain}>
-      <Text style={styles.titleText}>Log In</Text>
+      <Animated.Text style={[styles.titleText, {transform: [{translateY: slideAnimTop }] }]}>Log In</Animated.Text>
       </View>
 
     <View style={styles.login}>
-      <Text style={styles.infoText}>Username</Text>
+      <Animated.Text style={[styles.infoText, ,  { opacity: FadeAnim }]}>Username</Animated.Text>
       <TextInput placeholder="Username" style={styles.inputText}></TextInput>
-      <Text style={styles.infoText}>Password</Text>
+      <Animated.Text style={[styles.infoText, , { opacity: FadeAnim }]}>Password</Animated.Text>
       <TextInput placeholder="Password" style={styles.inputText} secureTextEntry></TextInput>
     </View>
     <TouchableOpacity style={styles.loginButton} onPress={buttonClicked}>
@@ -29,7 +50,7 @@ export default function App() {
       {popUp ? <Text style={styles.popUpText}>{popUp}</Text> : null}    
     </View>
 
-
+    </View>
     </ScrollView>
     </SafeAreaView>
   );
@@ -39,17 +60,19 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     backgroundColor: '#fff',
-    padding: 30
+    padding: 30,
+    marginVertical: 60
   },
   
   titleText: {
     fontSize: 40,
     fontWeight: 'bold',  
     textAlign: 'center',
-    marginVertical: 30
+    marginTop: 30,
+    color: '#ECAE36'
   },
   infoText: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
     textAlign: 'start',
     marginVertical: 20
@@ -58,16 +81,22 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginVertical: 50
   },
-  inputText: {
-    fontSize: 25,
-    textAlign: 'center',
+  loginContainer: {
+    padding: 30,
     borderWidth: 2,
-    padding: 10,
+    borderRadius: 8,
+    backgroundColor: '#FFFEF5'
+  },
+  inputText: {
+    fontSize: 15,
+    textAlign: 'start',
+    borderWidth: 2,
+    padding: 15,
     borderRadius: 10,
   },
   loginButton: {
     backgroundColor: 'black',
-    padding: 20,
+    padding: 13,
     borderRadius: 10
   },
   loginButtonText: {
@@ -77,14 +106,17 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
   popUpContainer: {
-    backgroundColor: 'skyblue',
+    backgroundColor: '#fff',
     padding: 14,
     marginTop: 40,
-    borderRadius: '100%'
+    borderRadius: 10,
   },
   popUpText:{
     fontSize: 16,
     fontWeight: 'bold',
-    textAlign: 'center'
+    textAlign: 'center',
+    backgroundColor: '#ECAE36',
+    color: '#fff',
+    padding: 20,
   }
 });
